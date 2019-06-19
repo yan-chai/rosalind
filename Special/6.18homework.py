@@ -83,12 +83,37 @@ def CG_content(conden_list):
         cg_content.append([first*100, second*100, thrid*100])
     return cg_content
 
+def most_likely(codens, var):
+    index = 0
+    min_var =min(var)
+    index_list = []
+    likely_coden = []
+    for i in var:
+        if i == min_var:
+            index_list.append(index)
+            index+=1
+    for i in index_list:
+        likely_coden.append(codens[i])
+    return likely_coden
+
 def suit(cg):
     variance = []
     for i in cg:
         variance.append(((int(i[0])-66)**2+(int(i[1])-53)**2+(int(i[2])-93)**2)/3)
     return variance
-start_coden = []
+
+def rare_coden(coden):
+    dic = {}
+    print(coden)
+    for i in coden:
+        string = ''
+        for j in i:
+            string += j
+        count_n = int(i.count("UUA"))+int(i.count("CUA"))
+        count_r = int(i.count("UUU"))+int(i.count("AUU"))+int(i.count("GUU"))+int(i.count("UCU"))+int(i.count("CCA"))+int(i.count("ACU"))
+        dic[string] = str("稀有密码子"+str(count_r)+",禁止密码子"+str(count_n))
+    return(dic)
+
 code_s = 'CGCTTGCGTGCGTCTCATCTGGAGGCTGCACCTGTCCGACCACTACGGCATCTGGCAGGAATTCGGCCAGAAGTTCCTCGTCGACCCCGACATCATCAAG'
 code_e = 'GGTGCGAGAGCGGATACTCCAGGACCTTGCGCACCTACCTGTCCTACGGCAGCAGCGACAACGCGAACCCAGTCTGCGAGACACGGCTGTGCAGGCCGTC' #输入序列
 pair_code_s = reverse(code_e)
@@ -105,7 +130,10 @@ cg_start = CG_content(start_findall)
 pair_cg_start = CG_content(pair_start_findall)
 start_suit = suit(cg_start)
 pair_start_suit = suit(pair_cg_start)
-
+most_likely_s = most_likely(start_findall, start_suit)
+pair_likely_s = most_likely(pair_start_findall, pair_start_suit)
+rare = rare_coden(most_likely_s)
+pair_rare = rare_coden(pair_likely_s)
 print("输入的起始序列：",code_s)
 print("输入的结束序列：",code_e)
 print("将输入的结束序列逆序互补后作为起始为：",pair_code_s)
@@ -118,8 +146,11 @@ print("给的链找起始子：", start_findall)
 print("互补链找起始子：", pair_start_findall)
 print("给的链找中止子：", end_findall)
 print("互补链找中止子：", pair_end_findall)
-print("给的链前三个CG比例：", cg_start)
-print("互补链前三个CG比例", pair_cg_start)
-print("给的链前三个CG的方差：", start_suit)
-print("互补链前三个CG的方差：", pair_start_suit)
+print("给的链前三个密码子CG比例：", cg_start)
+print("互补链前三个密码子CG比例", pair_cg_start)
+print("给的链前三个密码子CG的方差：", start_suit)
+print("互补链前三个密码子CG的方差：", pair_start_suit)
+print("给的链前三个最可能起始子：", most_likely_s)
+print("互补链前三个最可能起始子：", pair_likely_s)
+print("给定链密码子偏好分析：", dict(rare, **pair_rare))
 input()
